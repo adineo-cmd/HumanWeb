@@ -1,50 +1,402 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import Header from '../components/Header.astro';
-import { getCategoryBySlug } from '../lib/data';
 
-const MAIN = [
-  { slug: 'arts', icon: '🎨' },
-  { slug: 'business', icon: '📈' },
-  { slug: 'computers', icon: '🖥️' },
-  { slug: 'games', icon: '🎲' },
-  { slug: 'health', icon: '❤️' },
-  { slug: 'home', icon: '🏠' },
-  { slug: 'news', icon: '📰' },
-  { slug: 'recreation', icon: '🎭' },
-  { slug: 'reference', icon: '📖' },
-  { slug: 'regional', icon: '🚩' },
-  { slug: 'science', icon: '🧪' },
-  { slug: 'shopping', icon: '🛒' },
-  { slug: 'society', icon: '👥' },
-  { slug: 'sports', icon: '⚽' },
-  { slug: 'kids-and-teens', icon: '🧒' },
-];
-
-const cards = MAIN.map((m) => {
-  const cat = getCategoryBySlug(m.slug);
-  return {
-    ...m,
-    title: cat?.title ?? m.slug.replace(/-/g, ' '),
-    preview: cat
-      ? cat.subcategories.slice(0, 3).map((s) => s.title).join(', ') + '…'
-      : '',
-  };
-});
+const LIST_SOURCES = ['fmhy', 'awesome', 'selfhosted', 'freefordev', 'vlib'];
 ---
-<BaseLayout title="HumanWeb - The Open Web Directory">
-  <Header crumbs={[]} />
-  <main class="page">
-    <div class="home-grid">
-      {cards.map((c) => (
-        <a class="home-card" href={`/${c.slug}`}>
-          <span class="icon">{c.icon}</span>
-          <span>
-            <h2>{c.title}</h2>
-            <p>{c.preview}</p>
-          </span>
-        </a>
-      ))}
-    </div>
+<BaseLayout title="HumanWeb — the human-curated web">
+  <header class="top">
+    <h1>Human<span>Web</span></h1>
+    <p class="tagline">The human-curated web — one tab per source, never mixed.</p>
+  </header>
+
+  <nav class="tabs" id="tabs" aria-label="Data sources"></nav>
+
+  <main>
+    <section class="panel" id="panel-curlie" hidden>
+      <div class="panel-head">
+        <div>
+          <h2>Curlie</h2>
+          <p class="sub" id="curlie-sub"></p>
+        </div>
+        <p class="stats" id="curlie-stats"></p>
+      </div>
+      <nav class="crumbs" id="crumbs"></nav>
+      <input class="filter" id="curlie-filter" type="search"
+             placeholder="Filter inside this category (title, URL, description)…" />
+      <div class="status" id="curlie-status"></div>
+      <h3 class="section-h" id="curlie-cats-h" hidden>Categories</h3>
+      <div class="chips" id="curlie-cats"></div>
+      <h3 class="section-h" id="curlie-links-h" hidden>Websites</h3>
+      <ul class="links" id="curlie-links"></ul>
+      <button class="more" id="curlie-more" hidden>Show more</button>
+    </section>
+
+    {LIST_SOURCES.map((src) => (
+      <section class="panel" id={`panel-${src}`} hidden>
+        <div class="panel-head">
+          <div>
+            <h2>{src}</h2>
+            <p class="sub" data-role="sub"></p>
+          </div>
+          <p class="stats" data-role="stats"></p>
+        </div>
+        <div class="pagechips" data-role="pages"></div>
+        <input class="filter" type="search" data-role="filter"
+               placeholder="Search everything in this source…" />
+        <div class="status" data-role="status"></div>
+        <div data-role="content"></div>
+        <button class="more" data-role="more" hidden>Show more</button>
+      </section>
+    ))}
+
+    <noscript><p style="text-align:center">HumanWeb needs JavaScript to load and decompress the directory data in your browser.</p></noscript>
   </main>
+
+  <script>
+    // ============================== helpers ==================================
+    const $ = (sel, el = document) => el.querySelector(sel);
+    const $$ = (sel, el = document) => [...el.querySelectorAll(sel)];
+    const esc = (s) => String(s ?? "").replace(/[&<>"']/g,
+      (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+    const fmt = (n) => Number(n ?? 0).toLocaleString("en-US");
+
+    async function fetchAny(url) {
+      const r = await fetch(url);
+      if (!r.ok) throw new Error(`${r.status} ${url}`);
+      if (url.endsWith(".gz")) {
+        if (!("DecompressionStream" in window)) {
+          throw new Error("This browser lacks DecompressionStream — please update it.");
+        }
+        const ds = new DecompressionStream("gzip");
+        return new Response((await r.blob()).stream().pipeThrough(ds)).text();
+      }
+      return r.text();
+    }
+    const fetchJSON = async (url) => JSON.parse(await fetchAny(url));
+
+    async function fetchNDJSON(url) {
+      const map = new Map();
+      for (const line of (await fetchAny(url)).split("\n")) {
+        if (!line) continue;
+        const [path, links] = JSON.parse(line);
+        map.set(path, links);
+      }
+      return map;
+    }
+
+    // ============================== tabs / router ============================
+    const catalog = await fetchJSON("data/index.json").catch(() => ({ sources: [] }));
+    const SOURCES = catalog.sources.length
+      ? catalog.sources
+      : [{ id: "curlie", title: "Curlie", subtitle: "", links: 0, note: "" }];
+    const byId = Object.fromEntries(SOURCES.map((s) => [s.id, s]));
+
+    const tabsEl = $("#tabs");
+    tabsEl.innerHTML = SOURCES.map((s) => `
+      <button class="tab" data-src="${s.id}" title="${esc(s.subtitle)}">
+        ${esc(s.title)}
+        ${s.links ? `<span class="n">${s.links > 9999 ? Math.round(s.links / 1000) + "k" : s.links}</span>` : ""}
+      </button>`).join("");
+    tabsEl.addEventListener("click", (e) => {
+      const b = e.target.closest(".tab");
+      if (b) location.hash = b.dataset.src;
+    });
+
+    function setActive(id) {
+      $$(".tab", tabsEl).forEach((t) => t.classList.toggle("active", t.dataset.src === id));
+      $$("main .panel").forEach((p) => (p.hidden = p.id !== `panel-${id}`));
+    }
+
+    function route() {
+      const h = decodeURIComponent(location.hash.replace(/^#\/?/, ""));
+      const [src, ...rest] = h.split("/");
+      const id = byId[src] ? src : "curlie";
+      const sub = rest.join("/");
+      setActive(id);
+      if (id === "curlie") openCurlie(sub);
+      else openLister(id, sub).catch((e) => showErr(id, e));
+    }
+    window.addEventListener("hashchange", route);
+
+    function showErr(id, e) {
+      const p = $(`#panel-${id} [data-role=status]`) || $(`#curlie-status`);
+      if (p) { p.textContent = "⚠ " + (e.message || e); p.classList.add("err"); }
+      console.error(e);
+    }
+
+    // ============================== curlie browser ===========================
+    const C = {
+      ready: false, meta: null, tree: [], nodes: new Map(), refs: new Map(),
+      files: new Map(), path: "", filter: "", shown: 100,
+    };
+
+    async function initCurlie() {
+      if (C.ready) return;
+      C.meta = await fetchJSON("data/curlie/meta.json");
+      C.tree = await fetchJSON("data/curlie/tree.json.gz");
+      const indexNode = (nd, base) => {
+        const seg = nd.t.replace(/ /g, "_");
+        const p = base ? `${base}/${seg}` : seg;
+        nd._p = p;
+        C.nodes.set(p, nd);
+        if (nd.r) {
+          C.refs.set(p, nd.r);
+          const flat = (ref) => {
+            if (ref.k) for (const [cp, cr] of Object.entries(ref.k)) { C.refs.set(cp, cr); flat(cr); }
+          };
+          flat(nd.r);
+        }
+        (nd.c ?? []).forEach((ch) => indexNode(ch, p));
+      };
+      C.tree.forEach((r) => indexNode(r, ""));
+      $("#curlie-sub").textContent = C.meta.subtitle || "";
+      const tot = C.meta.totals ?? {};
+      $("#curlie-stats").innerHTML =
+        `<b>${fmt(tot.links_kept)}</b> websites · <b>${fmt(tot.categories_kept)}</b> categories` +
+        (C.meta.dump_date ? ` · dump ${C.meta.dump_date}` : "") +
+        ` · adult &amp; anime excluded · <a href="https://curlie.org" target="_blank" rel="noopener">curlie.org</a>`;
+      C.ready = true;
+    }
+
+    function coveringRef(P) {
+      const ref = C.refs.get(P);
+      if (ref) {
+        if (ref.f && !ref.s) return { file: ref.f };
+        if (ref.s) return { self: ref.f ?? null, k: ref.k ?? {} };
+      }
+      let q = P;
+      while (q.includes("/")) {
+        q = q.slice(0, q.lastIndexOf("/"));
+        const r2 = C.refs.get(q);
+        if (r2 && r2.f && !r2.s) return { file: r2.f };
+      }
+      return null;
+    }
+
+    function getRecords(name) {
+      if (!C.files.has(name)) C.files.set(name, fetchNDJSON(`data/curlie/c/${name}`));
+      const p = C.files.get(name);
+      p.then(() => {  // simple LRU: keep ~6 parsed chunks in memory
+        if (C.files.size > 6) {
+          for (const [k] of C.files) {
+            if (C.files.size <= 6) break;
+            C.files.delete(k);
+          }
+        }
+      });
+      return p;
+    }
+
+    function linkLi([t, u, d]) {
+      let host = "";
+      try { host = new URL(u).hostname.replace(/^www\./, ""); } catch { /* keep */ }
+      return `<li>
+        <a href="${esc(u)}" target="_blank" rel="noopener noreferrer nofollow">${esc(t || host)}</a>
+        <span class="u">${esc(host)}</span>
+        ${d ? `<p>${esc(d)}</p>` : ""}
+      </li>`;
+    }
+
+    async function showCurlie(P) {
+      const status = $("#curlie-status");
+      status.classList.remove("err");
+      try {
+        if (!C.ready) { status.textContent = "Loading directory index…"; await initCurlie(); }
+        P = (P || "").replace(/\/+$/, "");
+        C.path = P; C.filter = ""; C.shown = 100;
+        $("#curlie-filter").value = "";
+        renderCrumbs(P);
+
+        const cov = coveringRef(P);
+        let own = [];
+        let subcats = [];
+
+        if (cov && cov.file) {
+          status.textContent = "Loading category data…";
+          const recs = await getRecords(cov.file);
+          own = recs.get(P) ?? [];
+          const prefix = P ? `${P}/` : "";
+          const agg = new Map();
+          for (const [p, links] of recs) {
+            if (p === P || (prefix && !p.startsWith(prefix))) continue;
+            const seg = p.slice(prefix.length).split("/")[0];
+            const cp = prefix + seg;
+            const e = agg.get(cp) ?? { path: cp, title: seg.replace(/_/g, " "), links: 0, cats: 0 };
+            e.links += links.length; e.cats += 1;
+            agg.set(cp, e);
+          }
+          subcats = [...agg.values()].sort((a, b) => b.links - a.links || a.title.localeCompare(b.title));
+          status.textContent = "";
+        } else if (cov && "k" in cov) {
+          if (cov.self) {
+            status.textContent = "Loading category data…";
+            own = (await getRecords(cov.self)).get(P) ?? [];
+          }
+          subcats = Object.entries(cov.k)
+            .map(([cp, cr]) => ({
+              path: cp, title: cp.split("/").pop().replace(/_/g, " "),
+              links: null, cats: cr.n ?? 0,
+            }))
+            .sort((a, b) => a.title.localeCompare(b.title));
+          status.textContent = "";
+        } else {
+          const nd = C.nodes.get(P);
+          subcats = (nd?.c ?? C.tree)
+            .map((ch) => ({ path: ch._p, title: ch.t, links: ch.tot, cats: null }))
+            .sort((a, b) => b.links - a.links);
+        }
+
+        renderCurlie(P, subcats, own);
+      } catch (e) { showErr("curlie", e); }
+    }
+
+    function renderCrumbs(P) {
+      const el = $("#crumbs");
+      const parts = P ? P.split("/") : [];
+      const mk = (label, path, here) =>
+        here ? `<span class="here">${esc(label)}</span>`
+             : `<a data-go="${esc(path)}">${esc(label)}</a>`;
+      let html = mk("Curlie", "", parts.length === 0);
+      parts.forEach((seg, i) => {
+        html += ` <span class="sep">›</span> ` + mk(seg.replace(/_/g, " "), parts.slice(0, i + 1).join("/"), i === parts.length - 1);
+      });
+      el.innerHTML = html;
+      el.onclick = (e) => {
+        const a = e.target.closest("[data-go]");
+        if (a) location.hash = `curlie/${a.dataset.go}`.replace(/\/$/, "");
+      };
+    }
+
+    function renderCurlie(P, subcats, own) {
+      const q = C.filter.toLowerCase();
+      const fSub = q ? subcats.filter((s) => s.title.toLowerCase().includes(q)) : subcats;
+      const fOwn = q ? own.filter((l) => (l[0] + " " + l[1] + " " + (l[2] || "")).toLowerCase().includes(q)) : own;
+
+      $("#curlie-cats-h").hidden = !fSub.length;
+      $("#curlie-cats").innerHTML = fSub.slice(0, 400).map((s) => `
+        <button class="chip" data-go="${esc(s.path)}">
+          <span>${esc(s.title)}</span>
+          <span class="n">${s.links != null ? `${fmt(s.links)} sites` : `${fmt(s.cats)} cats`}</span>
+        </button>`).join("") +
+        (fSub.length > 400 ? `<p class="status">+ ${fmt(fSub.length - 400)} more categories — use the filter</p>` : "");
+      $("#curlie-cats").onclick = (e) => {
+        const b = e.target.closest("[data-go]");
+        if (b) location.hash = `curlie/${b.dataset.go}`;
+      };
+
+      const node = C.nodes.get(P);
+      const desc = node?.d;
+      $("#curlie-links-h").hidden = !fOwn.length && !desc;
+      $("#curlie-links").innerHTML =
+        (desc && !q ? `<li style="border-bottom:1px solid var(--border)"><p style="margin:0">${esc(desc)}</p></li>` : "") +
+        fOwn.slice(0, C.shown).map(linkLi).join("");
+      const moreBtn = $("#curlie-more");
+      moreBtn.hidden = fOwn.length <= C.shown;
+      moreBtn.textContent = `Show more (${fmt(fOwn.length - C.shown)} left)`;
+      moreBtn.onclick = () => { C.shown += 200; renderCurlie(P, subcats, own); };
+      $("#curlie-status").textContent = fOwn.length
+        ? `${fmt(fOwn.length)} websites in ${esc(P.split("/").pop().replace(/_/g, " ")) || "Curlie"}`
+        : "";
+    }
+
+    function openCurlie(sub) {
+      initCurlie()
+        .then(() => showCurlie(sub))
+        .catch((e) => showErr("curlie", e));
+    }
+
+    $("#curlie-filter").addEventListener("input", (e) => {
+      C.filter = e.target.value.trim();
+      C.shown = 100;
+      showCurlie(C.path);
+    });
+
+    // ============================== list sources =============================
+    const L = {};   // src -> {meta, data, page, filter, shown}
+
+    async function openLister(src, sub) {
+      const panel = $(`#panel-${src}`);
+      const status = $('[data-role=status]', panel);
+      status.classList.remove("err");
+      if (!L[src]) {
+        status.textContent = "Loading data…";
+        const [meta, data] = await Promise.all([
+          fetchJSON(`data/${src}/meta.json`),
+          fetchJSON(`data/${src}/data.json.gz`),
+        ]);
+        L[src] = { meta, data, page: sub && meta.pages?.some((p) => p.id === sub) ? sub : (meta.pages?.[0]?.id ?? ""), filter: "", shown: 60 };
+        const s = byId[src] ?? {};
+        $(".panel-head h2", panel).textContent = s.title ?? src;
+        $('[data-role=sub]', panel).textContent = meta.subtitle || s.subtitle || "";
+        $('[data-role=stats]', panel).innerHTML =
+          `<b>${fmt(meta.totals.links)}</b> links · <b>${fmt(meta.totals.pages)}</b> pages` +
+          (meta.homepage ? ` · <a href="${esc(meta.homepage)}" target="_blank" rel="noopener">homepage</a>` : "");
+        renderPages(src);
+        $('[data-role=filter]', panel).addEventListener("input", (e) => {
+          L[src].filter = e.target.value.trim(); L[src].shown = 60; renderLister(src);
+        });
+        $('[data-role=more]', panel).onclick = () => { L[src].shown += 100; renderLister(src); };
+      }
+      if (sub && L[src].meta.pages?.some((p) => p.id === sub) && L[src].page !== sub) {
+        L[src].page = sub;
+        renderPages(src);
+      }
+      status.textContent = "";
+      renderLister(src);
+    }
+
+    function renderPages(src) {
+      const panel = $(`#panel-${src}`);
+      const st = L[src];
+      const pages = st.meta.pages ?? [];
+      $('[data-role=pages]', panel).innerHTML = pages.map((p) => `
+        <button class="pchip ${p.id === st.page ? "active" : ""}" data-page="${esc(p.id)}">
+          ${esc(p.title)}<span class="n">${fmt(p.links)}</span>
+        </button>`).join("");
+      $('[data-role=pages]', panel).onclick = (e) => {
+        const b = e.target.closest("[data-page]");
+        if (!b) return;
+        st.page = b.dataset.page;
+        st.shown = 60;
+        renderPages(src);
+        renderLister(src);
+        history.replaceState(null, "", `#${src}/${st.page}`);
+      };
+    }
+
+    function renderLister(src) {
+      const panel = $(`#panel-${src}`);
+      const st = L[src];
+      const q = st.filter.toLowerCase();
+      const content = $('[data-role=content]', panel);
+      const status = $('[data-role=status]', panel);
+      const pageTitle = st.meta.pages?.find((p) => p.id === st.page)?.title ?? st.page;
+      let sections;
+
+      if (q) {
+        sections = st.data
+          .map((s) => ({ p: s.p, l: s.l.filter((x) => (x[0] + " " + x[1] + " " + (x[2] || "")).toLowerCase().includes(q)) }))
+          .filter((s) => s.l.length);
+      } else {
+        const pref = `${pageTitle} / `;
+        sections = st.data.filter((s) => s.p === pageTitle || s.p.startsWith(pref));
+      }
+      const total = sections.reduce((a, s) => a + s.l.length, 0);
+      status.textContent = q
+        ? `${fmt(total)} links match “${st.filter}” across ${fmt(sections.length)} sections`
+        : `${fmt(total)} links in ${pageTitle}`;
+
+      const cap = st.shown;
+      content.innerHTML = sections.slice(0, 60).map((s) => `
+        <details class="sec" open>
+          <summary>${esc(s.p)}<span class="cnt">${fmt(s.l.length)}</span></summary>
+          <ul class="links">${s.l.slice(0, cap).map(linkLi).join("")}</ul>
+          ${s.l.length > cap ? `<p style="color:var(--muted);font-size:12px;padding:0 15px 10px">+ ${fmt(s.l.length - cap)} more…</p>` : ""}
+        </details>`).join("") +
+        (sections.length > 60 ? `<p class="status">+ ${fmt(sections.length - 60)} more sections — refine the search</p>` : "");
+    }
+
+    // ============================== boot =====================================
+    route();
+  </script>
 </BaseLayout>

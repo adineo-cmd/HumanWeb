@@ -1,17 +1,18 @@
 ---
 import '../styles/global.css';
-const { title } = Astro.props as { title: string };
+const { title, description } = Astro.props as { title: string; description?: string };
 ---
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description ?? "HumanWeb — a human-curated map of the web: browse Curlie, FMHY, Awesome lists and more, one tab per source."} />
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
     <title>{title}</title>
-    
     <!-- Prevent Flash of Unstyled Content (FOUC) -->
     <script is:inline>
-      const theme = localStorage.getItem('theme') || 
+      const theme = localStorage.getItem('theme') ||
         (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
       document.documentElement.setAttribute('data-theme', theme);
     </script>
@@ -19,7 +20,12 @@ const { title } = Astro.props as { title: string };
   <body>
     <slot />
     <footer class="site-footer">
-      Data from the open-source Curlie and other directory
+      <p>
+        HumanWeb shows each source's public data strictly separate, one tab per source.
+        Curlie data © the Curlie community (Curlie Directory License; dump 2026-02-02; adult &amp; anime categories excluded).
+        FMHY © r/FREEMEDIAHECKYEAH · Awesome © sindresorhus (CC0) · Self-Hosted © awesome-selfhosted (CC-BY-SA) ·
+        Free-for-dev © ripienaar · VLib © The WWW Virtual Library.
+      </p>
     </footer>
   </body>
 </html>

@@ -1,46 +1,79 @@
-# Astro Starter Kit: Basics
+# HumanWeb
+
+A human-curated map of the web. Six directory sources, one tab each — **never mixed**:
+
+| Tab | Source | Links |
+| --- | --- | --- |
+| Curlie | [curlie.org](https://curlie.org) full dump (2026-02-02) — adult & anime excluded | ~2.62 M |
+| FMHY | [r/FREEMEDIAHECKYEAH](https://fmhy.net) | ~23.9 k |
+| Awesome | [sindresorhus/awesome](https://github.com/sindresorhus/awesome) | ~0.7 k |
+| Self-Hosted | [awesome-selfhosted](https://github.com/awesome-selfhosted/awesome-selfhosted) | ~2.9 k |
+| Free for Dev | [ripienaar/free-for-dev](https://github.com/ripienaar/free-for-dev) | ~1.4 k |
+| VLib | [WWW Virtual Library](https://vlib.org) | ~2.6 k |
+
+Tap a tab and that source's data loads underneath it — each tab fetches only its
+own files under `public/data/<source>/`, so the datasets can't mix.
+
+## The site
+
+Static [Astro](https://astro.build) app (`src/pages/index.astro`). All data lives
+in `public/data/` and is fetched + gunzipped in the browser
+(`DecompressionStream`), so no server is needed — GitHub Pages / Netlify / any
+static host works.
+
+- **Curlie tab** — browse 528 k categories: the ~0.1 MB `tree.json.gz` index
+  loads instantly; clicking a category lazy-loads one chunk file from
+  `public/data/curlie/c/` (per second-level category, recursively split so no
+  file is huge). A breadcrumb bar, per-category filter, and "show more" keep it
+  usable at 2.6 M links. Deep links work: `#curlie/Arts/Animation/Anime`.
+- **Other tabs** — whole source loads once (~7–440 KB gz); page chips + sections
+  + instant client-side search.
+
+## Data pipeline
+
+Requires Python 3.10+.
 
 ```sh
-npm create astro@latest -- --template basics
+# 1. download the official curlie dump (see https://curlie.org/download)
+curl -LO https://share.innkube.fim.uni-passau.de/curlie-rdf/curlie-rdf-all.tar.gz
+mkdir -p ~/curlie_data/extracted && tar -xzf curlie-rdf-all.tar.gz -C ~/curlie_data/extracted
+
+# 2. extract everything (excludes Adult tree + any anime category)
+python3 scripts/parse_curlie.py ~/curlie_data/extracted/curlie-rdf
+
+# 3. re-chunk for the web UI (per-depth-2 files, recursive split)
+python3 scripts/rechunk_curlie.py
+
+# 4. other sources (downloads markdown lists + scrapes vlib.org into sources_raw/)
+python3 scripts/fetch_sources.py
+python3 scripts/parse_sources.py
+
+# 5. tab catalog
+python3 scripts/make_sources_index.py
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+Verification numbers for every run land in `data-reports/curlie_report.json`
+(records parsed, duplicates dropped, excluded adult/anime counts, unknown ids…).
 
-## 🚀 Project Structure
+### Content policy
 
-Inside of your Astro project, you'll see the following folders and files:
+- The entire `Adult` top-level tree is excluded, as is **any category whose path
+  contains "anime"** (in any language), per project requirements.
+- Filtered counts are in the report (`excluded_links_adult`, `excluded_links_anime`,
+  `cats_excluded_*`).
+- Section-level filtering (same terms) is applied to the markdown sources too.
 
-```text
-/
-├── public/
-│   └── favicon.svg
-├── src
-│   ├── assets
-│   │   └── astro.svg
-│   ├── components
-│   │   └── Welcome.astro
-│   ├── layouts
-│   │   └── Layout.astro
-│   └── pages
-│       └── index.astro
-└── package.json
+### Licenses
+
+Each source keeps its own license, shown in the site footer: Curlie Directory
+License, FMHY community terms, CC0 (Awesome), CC-BY-SA (Self-Hosted), ©
+contributors (free-for-dev), © The WWW Virtual Library (VLib). Raw copies of the
+fetched sources are kept in `sources_raw/` for provenance.
+
+## Development
+
+```sh
+npm install
+npm run dev        # http://localhost:4321
+npm run build      # static output in dist/
 ```
-
-To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
-
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).

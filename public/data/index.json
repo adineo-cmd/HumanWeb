@@ -1,0 +1,53 @@
+{
+ "generated": "2026-10-24",
+ "sources": [
+  {
+   "id": "curlie",
+   "title": "Curlie",
+   "subtitle": "The largest human-edited web directory (excl. adult & anime)",
+   "homepage": "https://curlie.org",
+   "links": 2619031,
+   "note": "dump 2026-02-02 · adult & anime excluded"
+  },
+  {
+   "id": "fmhy",
+   "title": "FMHY",
+   "subtitle": "r/FREEMEDIAHECKYEAH — the big list of free media & tools",
+   "homepage": "https://fmhy.net",
+   "links": 23871,
+   "note": ""
+  },
+  {
+   "id": "awesome",
+   "title": "Awesome",
+   "subtitle": "sindresorhus/awesome — awesome lists about all things awesome",
+   "homepage": "https://awesome.selfhosted.app",
+   "links": 676,
+   "note": ""
+  },
+  {
+   "id": "selfhosted",
+   "title": "Self-Hosted",
+   "subtitle": "awesome-selfhosted — free software network services you can self-host",
+   "homepage": "https://awesome-selfhosted.net",
+   "links": 2908,
+   "note": ""
+  },
+  {
+   "id": "freefordev",
+   "title": "Free for Dev",
+   "subtitle": "Software (SaaS, PaaS, IaaS...) with free tiers for developers",
+   "homepage": "https://free-for.dev",
+   "links": 1410,
+   "note": ""
+  },
+  {
+   "id": "vlib",
+   "title": "VLib",
+   "subtitle": "The WWW Virtual Library — the oldest web directory (est. 1991)",
+   "homepage": "https://vlib.org",
+   "links": 2585,
+   "note": ""
+  }
+ ]
+}
