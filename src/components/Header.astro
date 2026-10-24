@@ -1,0 +1,61 @@
+---
+const { crumbs = [] } = Astro.props as { crumbs?: { label: string; href?: string }[] };
+---
+<header class="site-header">
+  <div class="header-inner">
+    <a class="brand" href="/">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 3a9 9 0 1 0 0 18h.75c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01a1.5 1.5 0 0 1 1.14-2.49H16a5 5 0 0 0 5-5c0-4.42-4.03-8-9-8Zm-5.5 9a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3Zm3-4a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3Zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3Zm3 4a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3Z"/>
+      </svg>
+      HumanWeb
+    </a>
+    
+    {crumbs.map((c) => (
+      <>
+        <span class="crumb-sep">›</span>
+        {c.href
+          ? <a class="crumb-link" href={c.href}>{c.label}</a>
+          : <span class="crumb-current">{c.label}</span>}
+      </>
+    ))}
+
+    <!-- Theme Toggle Button -->
+    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode">
+      <span class="icon-sun">☀️</span>
+      <span class="icon-moon">🌙</span>
+    </button>
+  </div>
+</header>
+
+<script>
+  const toggleBtn = document.getElementById('theme-toggle');
+  
+  if (toggleBtn) {
+    // Function to update the icon visibility based on the current theme
+    const updateIcon = (theme: string) => {
+      const sun = toggleBtn.querySelector('.icon-sun') as HTMLElement;
+      const moon = toggleBtn.querySelector('.icon-moon') as HTMLElement;
+      if (theme === 'dark') {
+        sun.style.display = 'none';
+        moon.style.display = 'inline';
+      } else {
+        sun.style.display = 'inline';
+        moon.style.display = 'none';
+      }
+    };
+
+    // Set initial icon state on page load
+    const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+    updateIcon(currentTheme);
+
+    // Handle click events
+    toggleBtn.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+      updateIcon(newTheme);
+    });
+  }
+</script>

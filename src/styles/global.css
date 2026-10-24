@@ -1,0 +1,167 @@
+:root {
+  --green: #1a8a3c;
+  --green-dark: #116c2c;
+  --bg: #f4f6f9;
+  --panel-bg: #e9f2ec;
+  --panel-border: #ccd8cd;
+  --border: #dfe5ea;
+  --text: #2f3640;
+  --muted: #6b7280;
+  
+  /* New variables for dark mode support */
+  --surface: #ffffff;
+  --surface-alt: #eef1f4;
+  --surface-alt-hover: #e6eaef;
+  --text-strong: #333333;
+  --text-heading: #3b4149;
+  --footer-bg: #2f3640;
+  --footer-text: #aab2bd;
+}
+
+/* Dark Mode Overrides */
+[data-theme="dark"] {
+  --green: #4ade80;
+  --green-dark: #22c55e;
+  --bg: #121212;
+  --panel-bg: #1a1f1c;
+  --panel-border: #2d3831;
+  --border: #2a2a2a;
+  --text: #e0e0e0;
+  --muted: #9ca3af;
+  
+  --surface: #1e1e1e;
+  --surface-alt: #252525;
+  --surface-alt-hover: #2d2d2d;
+  --text-strong: #f3f4f6;
+  --text-heading: #f9fafb;
+  --footer-bg: #0a0a0a;
+  --footer-text: #888888;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: 15px;
+  line-height: 1.55;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+a { color: var(--green); text-decoration: none; transition: color 0.2s ease; }
+a:hover { text-decoration: underline; color: var(--green-dark); }
+
+/* ---------- Header ---------- */
+.site-header { background: var(--surface); border-bottom: 1px solid var(--border); transition: background 0.3s ease, border-color 0.3s ease; }
+.header-inner {
+  max-width: 1000px; margin: 0 auto;
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 20px;
+}
+.brand { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 20px; color: var(--green); }
+.brand:hover { text-decoration: none; color: var(--green-dark); }
+.brand svg { width: 36px; height: 36px; fill: var(--green); transition: fill 0.2s ease; }
+.crumb-sep { color: var(--muted); font-size: 18px; }
+.crumb-link { font-size: 17px; }
+.crumb-current { font-weight: 700; font-size: 18px; color: var(--text-strong); }
+
+/* ---------- Page ---------- */
+.page { max-width: 1000px; margin: 0 auto; padding: 24px 20px 60px; }
+.page-title { text-align: center; font-size: 30px; color: var(--text-heading); margin: 18px 0 24px; }
+
+/* ---------- Description box ---------- */
+.desc-box {
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: 6px;
+  padding: 16px 20px;
+  margin-bottom: 28px;
+  color: var(--muted);
+  transition: background 0.3s ease, border-color 0.3s ease;
+}
+.desc-box p { margin: 0 0 12px; }
+.desc-box .cat-id { margin: 0; color: var(--muted); }
+
+/* ---------- Collapsible blocks ---------- */
+details.block { margin-bottom: 26px; }
+details.block > summary {
+  list-style: none; cursor: pointer;
+  display: flex; align-items: center; gap: 10px;
+  background: var(--surface-alt); border: 1px solid var(--border); border-radius: 4px;
+  padding: 10px 14px; font-weight: 700; color: var(--text-strong);
+  user-select: none;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+details.block > summary::-webkit-details-marker { display: none; }
+details.block > summary::before {
+  content: "▼"; font-size: 11px; color: var(--muted);
+  transition: transform 0.15s ease;
+}
+details.block:not([open]) > summary::before { transform: rotate(-90deg); }
+details.block > summary:hover { background: var(--surface-alt-hover); }
+.count-badge { color: var(--muted); font-weight: 600; }
+.block-body { 
+  background: var(--surface); border: 1px solid var(--border); border-top: 0; 
+  border-radius: 0 0 4px 4px; padding: 4px 14px; 
+  transition: background 0.3s ease, border-color 0.3s ease;
+}
+.empty { color: var(--muted); font-style: italic; padding: 12px 4px; }
+
+/* ---------- Site list ---------- */
+.site-item { padding: 12px 6px; border-bottom: 1px solid var(--border); }
+.site-item:last-child { border-bottom: 0; }
+.site-item h3 { margin: 0 0 4px; font-size: 15px; color: var(--text-strong); }
+.site-item p { margin: 0; color: var(--muted); }
+
+/* ---------- Subcategory grid ---------- */
+.subcat-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 10px 28px; padding: 16px 8px;
+  background: var(--surface); border: 1px solid var(--border); border-top: 0;
+  border-radius: 0 0 4px 4px;
+  transition: background 0.3s ease, border-color 0.3s ease;
+}
+.subcat-grid a { display: flex; align-items: center; gap: 8px; }
+.subcat-grid svg { width: 16px; height: 16px; flex: none; fill: none; stroke: var(--muted); stroke-width: 2; transition: stroke 0.2s ease; }
+
+/* ---------- Home page ---------- */
+.home-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px 48px; padding: 34px 10px; }
+.home-card { display: flex; gap: 16px; align-items: flex-start; }
+.home-card:hover { text-decoration: none; }
+.home-card .icon { font-size: 36px; line-height: 1; filter: grayscale(1); opacity: 0.9; }
+.home-card h2 { margin: 0 0 4px; font-size: 17px; color: var(--text-heading); transition: color 0.2s ease; }
+.home-card:hover h2 { color: var(--green); }
+.home-card p { margin: 0; color: var(--muted); }
+
+/* ---------- Footer ---------- */
+.site-footer { background: var(--footer-bg); color: var(--footer-text); text-align: center; padding: 18px; font-size: 13px; transition: background 0.3s ease, color 0.3s ease; }
+
+/* ---------- Theme Toggle Button ---------- */
+.theme-toggle {
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 6px 12px;
+  border-radius: 9999px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto; /* Pushes the button to the far right */
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+.theme-toggle:hover {
+  background: var(--surface-alt-hover);
+}
+
+@media (max-width: 800px) {
+  .subcat-grid { grid-template-columns: 1fr 1fr; }
+  .home-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 560px) {
+  .subcat-grid { grid-template-columns: 1fr; }
+}

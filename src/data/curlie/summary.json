@@ -1,0 +1,143 @@
+{
+  "generated_at": "/home/aditya",
+  "max_file_size_mb": 20,
+  "categories": {
+    "Arts": {
+      "files_count": 3,
+      "total_categories": 46300,
+      "total_size_mb": 40.69,
+      "files": [
+        "arts_part1.json",
+        "arts_part2.json",
+        "arts_part3.json"
+      ]
+    },
+    "Business": {
+      "files_count": 2,
+      "total_categories": 12365,
+      "total_size_mb": 31.98,
+      "files": [
+        "business_part1.json",
+        "business_part2.json"
+      ]
+    },
+    "Computers": {
+      "files_count": 1,
+      "total_categories": 8219,
+      "total_size_mb": 14.54,
+      "files": [
+        "computers_part1.json"
+      ]
+    },
+    "Games": {
+      "files_count": 1,
+      "total_categories": 12895,
+      "total_size_mb": 9.04,
+      "files": [
+        "games_part1.json"
+      ]
+    },
+    "Health": {
+      "files_count": 1,
+      "total_categories": 7328,
+      "total_size_mb": 10.14,
+      "files": [
+        "health_part1.json"
+      ]
+    },
+    "Home": {
+      "files_count": 1,
+      "total_categories": 2597,
+      "total_size_mb": 3.52,
+      "files": [
+        "home_part1.json"
+      ]
+    },
+    "News": {
+      "files_count": 1,
+      "total_categories": 519,
+      "total_size_mb": 1.11,
+      "files": [
+        "news_part1.json"
+      ]
+    },
+    "Recreation": {
+      "files_count": 1,
+      "total_categories": 11428,
+      "total_size_mb": 14.69,
+      "files": [
+        "recreation_part1.json"
+      ]
+    },
+    "Reference": {
+      "files_count": 1,
+      "total_categories": 11590,
+      "total_size_mb": 12.63,
+      "files": [
+        "reference_part1.json"
+      ]
+    },
+    "Science": {
+      "files_count": 1,
+      "total_categories": 13528,
+      "total_size_mb": 18.15,
+      "files": [
+        "science_part1.json"
+      ]
+    },
+    "Shopping": {
+      "files_count": 1,
+      "total_categories": 5227,
+      "total_size_mb": 9.39,
+      "files": [
+        "shopping_part1.json"
+      ]
+    },
+    "Sports": {
+      "files_count": 1,
+      "total_categories": 18200,
+      "total_size_mb": 18.1,
+      "files": [
+        "sports_part1.json"
+      ]
+    },
+    "Society": {
+      "files_count": 2,
+      "total_categories": 28529,
+      "total_size_mb": 37.85,
+      "files": [
+        "society_part1.json",
+        "society_part2.json"
+      ]
+    },
+    "Kids and Teens": {
+      "files_count": 1,
+      "total_categories": 7300,
+      "total_size_mb": 8.62,
+      "files": [
+        "kids-and-teens_part1.json"
+      ]
+    },
+    "Regional": {
+      "files_count": 14,
+      "total_categories": 319009,
+      "total_size_mb": 279.52,
+      "files": [
+        "regional_part1.json",
+        "regional_part2.json",
+        "regional_part3.json",
+        "regional_part4.json",
+        "regional_part5.json",
+        "regional_part6.json",
+        "regional_part7.json",
+        "regional_part8.json",
+        "regional_part9.json",
+        "regional_part10.json",
+        "regional_part11.json",
+        "regional_part12.json",
+        "regional_part13.json",
+        "regional_part14.json"
+      ]
+    }
+  }
+}

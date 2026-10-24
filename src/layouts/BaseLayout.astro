@@ -1,0 +1,25 @@
+---
+import '../styles/global.css';
+const { title } = Astro.props as { title: string };
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    
+    <!-- Prevent Flash of Unstyled Content (FOUC) -->
+    <script is:inline>
+      const theme = localStorage.getItem('theme') || 
+        (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', theme);
+    </script>
+  </head>
+  <body>
+    <slot />
+    <footer class="site-footer">
+      Data from the open-source Curlie and other directory
+    </footer>
+  </body>
+</html>

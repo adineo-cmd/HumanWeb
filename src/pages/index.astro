@@ -1,0 +1,50 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import { getCategoryBySlug } from '../lib/data';
+
+const MAIN = [
+  { slug: 'arts', icon: '🎨' },
+  { slug: 'business', icon: '📈' },
+  { slug: 'computers', icon: '🖥️' },
+  { slug: 'games', icon: '🎲' },
+  { slug: 'health', icon: '❤️' },
+  { slug: 'home', icon: '🏠' },
+  { slug: 'news', icon: '📰' },
+  { slug: 'recreation', icon: '🎭' },
+  { slug: 'reference', icon: '📖' },
+  { slug: 'regional', icon: '🚩' },
+  { slug: 'science', icon: '🧪' },
+  { slug: 'shopping', icon: '🛒' },
+  { slug: 'society', icon: '👥' },
+  { slug: 'sports', icon: '⚽' },
+  { slug: 'kids-and-teens', icon: '🧒' },
+];
+
+const cards = MAIN.map((m) => {
+  const cat = getCategoryBySlug(m.slug);
+  return {
+    ...m,
+    title: cat?.title ?? m.slug.replace(/-/g, ' '),
+    preview: cat
+      ? cat.subcategories.slice(0, 3).map((s) => s.title).join(', ') + '…'
+      : '',
+  };
+});
+---
+<BaseLayout title="HumanWeb - The Open Web Directory">
+  <Header crumbs={[]} />
+  <main class="page">
+    <div class="home-grid">
+      {cards.map((c) => (
+        <a class="home-card" href={`/${c.slug}`}>
+          <span class="icon">{c.icon}</span>
+          <span>
+            <h2>{c.title}</h2>
+            <p>{c.preview}</p>
+          </span>
+        </a>
+      ))}
+    </div>
+  </main>
+</BaseLayout>
