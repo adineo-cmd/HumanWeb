@@ -14,7 +14,7 @@
    "title": "FMHY",
    "subtitle": "r/FREEMEDIAHECKYEAH — the big list of free media & tools",
    "homepage": "https://fmhy.net",
-   "links": 23871,
+   "links": 23849,
    "note": ""
   },
   {
@@ -22,7 +22,7 @@
    "title": "Awesome",
    "subtitle": "sindresorhus/awesome — awesome lists about all things awesome",
    "homepage": "https://awesome.selfhosted.app",
-   "links": 676,
+   "links": 675,
    "note": ""
   },
   {
@@ -30,7 +30,7 @@
    "title": "Self-Hosted",
    "subtitle": "awesome-selfhosted — free software network services you can self-host",
    "homepage": "https://awesome-selfhosted.net",
-   "links": 2908,
+   "links": 2905,
    "note": ""
   },
   {
@@ -38,7 +38,7 @@
    "title": "Free for Dev",
    "subtitle": "Software (SaaS, PaaS, IaaS...) with free tiers for developers",
    "homepage": "https://free-for.dev",
-   "links": 1410,
+   "links": 1407,
    "note": ""
   },
   {
@@ -47,6 +47,46 @@
    "subtitle": "The WWW Virtual Library — the oldest web directory (est. 1991)",
    "homepage": "https://vlib.org",
    "links": 2585,
+   "note": ""
+  },
+  {
+   "id": "apis",
+   "title": "Public APIs",
+   "subtitle": "public-apis — hundreds of free APIs for developers",
+   "homepage": "https://github.com/public-apis/public-apis",
+   "links": 2226,
+   "note": ""
+  },
+  {
+   "id": "devbooks",
+   "title": "Dev Books",
+   "subtitle": "free-programming-books — free programming books & courses",
+   "homepage": "https://ebookfoundation.github.io/free-programming-books/",
+   "links": 2451,
+   "note": ""
+  },
+  {
+   "id": "buildyourownx",
+   "title": "Build Your Own X",
+   "subtitle": "step-by-step guides to build your own database, bot, compiler, OS…",
+   "homepage": "https://github.com/danistefanovic/build-your-own-x",
+   "links": 355,
+   "note": ""
+  },
+  {
+   "id": "privacy",
+   "title": "Privacy Tools",
+   "subtitle": "awesome-privacy — services & alternatives that respect your privacy",
+   "homepage": "https://github.com/pluja/awesome-privacy",
+   "links": 700,
+   "note": ""
+  },
+  {
+   "id": "usefulsites",
+   "title": "Useful Sites",
+   "subtitle": "the best websites a programmer should visit — study, tools, news",
+   "homepage": "https://github.com/sdmg15/Best-websites-a-programmer-should-visit",
+   "links": 674,
    "note": ""
   }
  ]

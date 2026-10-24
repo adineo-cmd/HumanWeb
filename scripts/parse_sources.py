@@ -21,6 +21,8 @@ LINK_RE = re.compile(r"\[([^\]]+)\]\(\s*([^)\s]+)[^)]*\)")
 MIRROR_TITLES = {"2", "3", "4", "5", "6", "7", "8", "here", "this", "source",
                  "discord", "telegram", "status", "invite", "mirror", "mirrors",
                  "back", "faq", "changelog", "download", "reddit", "github"}
+IMG_URL_RE = re.compile(
+    r"\.(svg|png|jpe?g|gif|webp|ico|bmp)([?#].*)?$|shields\.io|travis-ci\.org|badge", re.I)
 ANYLINK_RE = re.compile(r"\[([^\]]*)\]\([^)]*\)")
 BOLD_RE = re.compile(r"\*\*([^*]+)\*\*")
 CODE_RE = re.compile(r"`([^`]*)`")
@@ -79,6 +81,47 @@ SOURCES = {
         "license": "© The WWW Virtual Library — vlib.org",
         "resolve_base": None,
     },
+    "apis": {
+        "title": "Public APIs",
+        "subtitle": "public-apis — hundreds of free APIs for developers",
+        "homepage": "https://github.com/public-apis/public-apis",
+        "license": "© contributors — source: github.com/public-apis/public-apis",
+        "resolve_base": "https://github.com/public-apis/public-apis/blob/master/",
+        "titles": {"public-apis": "Public APIs"},
+    },
+    "devbooks": {
+        "title": "Dev Books",
+        "subtitle": "free-programming-books — free programming books & courses",
+        "homepage": "https://ebookfoundation.github.io/free-programming-books/",
+        "license": "CC BY — source: github.com/EbookFoundation/free-programming-books",
+        "resolve_base": "https://github.com/EbookFoundation/free-programming-books/blob/main/",
+        "titles": {"free-programming-books-langs": "Books by Language",
+                   "free-programming-books-subjects": "Books by Subject"},
+    },
+    "buildyourownx": {
+        "title": "Build Your Own X",
+        "subtitle": "step-by-step guides to build your own database, bot, compiler, OS…",
+        "homepage": "https://github.com/danistefanovic/build-your-own-x",
+        "license": "© contributors — source: github.com/danistefanovic/build-your-own-x",
+        "resolve_base": "https://github.com/danistefanovic/build-your-own-x/blob/master/",
+        "titles": {"build-your-own-x": "Build Your Own X"},
+    },
+    "privacy": {
+        "title": "Privacy Tools",
+        "subtitle": "awesome-privacy — services & alternatives that respect your privacy",
+        "homepage": "https://github.com/pluja/awesome-privacy",
+        "license": "© contributors — source: github.com/pluja/awesome-privacy",
+        "resolve_base": "https://github.com/pluja/awesome-privacy/blob/main/",
+        "titles": {"awesome-privacy": "Privacy Tools"},
+    },
+    "usefulsites": {
+        "title": "Useful Sites",
+        "subtitle": "the best websites a programmer should visit — study, tools, news",
+        "homepage": "https://github.com/sdmg15/Best-websites-a-programmer-should-visit",
+        "license": "© contributors — source: github.com/sdmg15/Best-websites-a-programmer-should-visit",
+        "resolve_base": "https://github.com/sdmg15/Best-websites-a-programmer-should-visit/blob/master/",
+        "titles": {"best-websites": "Useful Sites"},
+    },
 }
 
 
@@ -95,7 +138,11 @@ def clean_desc(s: str) -> str:
 
 def resolve(url: str, base: str | None) -> str | None:
     if url.startswith(("http://", "https://", "mailto:")):
-        return None if url.startswith("mailto:") else url
+        if url.startswith("mailto:"):
+            return None
+        if IMG_URL_RE.search(url):
+            return None                         # badges / images
+        return url
     if url.startswith("#"):
         return None
     if base and not url.startswith("http"):
@@ -138,7 +185,10 @@ def parse_markdown(text: str, page_title: str, resolve_base: str | None):
                     url = resolve(lm.group(2), resolve_base)
                     if url:
                         title = strip_md(lm.group(1)).strip() or cell[:80]
-                        desc = clean_desc(" — ".join(cells[ci + 1:])) or clean_desc(cell)
+                        tail = [c for c in cells[ci + 1:]
+                                if len(c) > 3 and c.lower() not in
+                                {"yes", "no", "varies", "api key", "apikey", "unknown"}]
+                        desc = clean_desc(" — ".join(tail)) or clean_desc(cell)
                         links.append([title[:200], url, desc])
                     break
         else:                                                  # bullet / plain
@@ -186,14 +236,14 @@ def parse_markdown(text: str, page_title: str, resolve_base: str | None):
     return out, removed_links
 
 
-def load_source_pages(source: str):
+def load_source_pages(source: str, cfg: dict):
     """Yield (page_id, page_title, text_or_vlibjson)."""
     d = RAW / source
     if source == "vlib":
         for fp in sorted(d.glob("*.json")):
             yield fp.stem, fp.stem, json.loads(fp.read_text(encoding="utf-8"))
         return
-    title_map = FMHY_TITLES if source == "fmhy" else {}
+    title_map = cfg.get("titles") or (FMHY_TITLES if source == "fmhy" else {})
     for fp in sorted(d.glob("*.md")):
         pid = fp.stem
         yield pid, title_map.get(pid, pid.replace("-", " ").title()), fp.read_text(encoding="utf-8", errors="replace")
@@ -204,7 +254,7 @@ def build_source(source: str, cfg: dict) -> None:
     out_dir.mkdir(parents=True, exist_ok=True)
     all_sections: OrderedDict[str, list] = OrderedDict()
     pages, removed_total = [], 0
-    for pid, ptitle, payload in load_source_pages(source):
+    for pid, ptitle, payload in load_source_pages(source, cfg):
         if source == "vlib":
             secs: OrderedDict[str, list] = OrderedDict()
             for item in payload:

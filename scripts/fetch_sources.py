@@ -37,6 +37,22 @@ MD_SOURCES = {
     "freefordev": [
         ("https://raw.githubusercontent.com/ripienaar/free-for-dev/master/README.md", "free-for-dev"),
     ],
+    "apis": [
+        ("https://raw.githubusercontent.com/public-apis/public-apis/master/README.md", "public-apis"),
+    ],
+    "devbooks": [
+        ("https://raw.githubusercontent.com/EbookFoundation/free-programming-books/main/books/free-programming-books-langs.md", "free-programming-books-langs"),
+        ("https://raw.githubusercontent.com/EbookFoundation/free-programming-books/main/books/free-programming-books-subjects.md", "free-programming-books-subjects"),
+    ],
+    "buildyourownx": [
+        ("https://raw.githubusercontent.com/danistefanovic/build-your-own-x/master/README.md", "build-your-own-x"),
+    ],
+    "privacy": [
+        ("https://raw.githubusercontent.com/pluja/awesome-privacy/main/README.md", "awesome-privacy"),
+    ],
+    "usefulsites": [
+        ("https://raw.githubusercontent.com/sdmg15/Best-websites-a-programmer-should-visit/master/README.md", "best-websites"),
+    ],
 }
 
 VLIB_CATEGORIES = [

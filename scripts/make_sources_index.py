@@ -6,13 +6,19 @@ from pathlib import Path
 BASE = Path(__file__).resolve().parent.parent
 OUT = BASE / "public" / "data"
 
-ORDER = ["curlie", "fmhy", "awesome", "selfhosted", "freefordev", "vlib"]
+ORDER = ["curlie", "fmhy", "awesome", "selfhosted", "freefordev", "vlib",
+         "apis", "devbooks", "buildyourownx", "privacy", "usefulsites"]
 GENERIC = {
     "fmhy": ("FMHY", "r/FREEMEDIAHECKYEAH — the big list of free media & tools", "https://fmhy.net"),
     "awesome": ("Awesome", "sindresorhus/awesome — curated lists about everything", "https://github.com/sindresorhus/awesome"),
     "selfhosted": ("Self-Hosted", "awesome-selfhosted — free network services you can host yourself", "https://awesome-selfhosted.net"),
     "freefordev": ("Free for Dev", "SaaS / PaaS / IaaS with generous free tiers for developers", "https://free-for.dev"),
     "vlib": ("VLib", "The WWW Virtual Library — the oldest catalogue of the web (est. 1991)", "https://vlib.org"),
+    "apis": ("Public APIs", "hundreds of free APIs for developers", "https://github.com/public-apis/public-apis"),
+    "devbooks": ("Dev Books", "free programming books & courses", "https://ebookfoundation.github.io/free-programming-books/"),
+    "buildyourownx": ("Build Your Own X", "step-by-step guides: build your own database, bot, compiler, OS…", "https://github.com/danistefanovic/build-your-own-x"),
+    "privacy": ("Privacy Tools", "services & alternatives that respect your privacy", "https://github.com/pluja/awesome-privacy"),
+    "usefulsites": ("Useful Sites", "the best websites a programmer should visit", "https://github.com/sdmg15/Best-websites-a-programmer-should-visit"),
 }
 
 out = {"generated": "2026-10-24", "sources": []}

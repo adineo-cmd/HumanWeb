@@ -1,6 +1,6 @@
 # HumanWeb
 
-A human-curated map of the web. Six directory sources, one tab each — **never mixed**:
+A human-curated map of the web. Eleven directory sources, one tab each — **never mixed**:
 
 | Tab | Source | Links |
 | --- | --- | --- |
@@ -10,6 +10,11 @@ A human-curated map of the web. Six directory sources, one tab each — **never 
 | Self-Hosted | [awesome-selfhosted](https://github.com/awesome-selfhosted/awesome-selfhosted) | ~2.9 k |
 | Free for Dev | [ripienaar/free-for-dev](https://github.com/ripienaar/free-for-dev) | ~1.4 k |
 | VLib | [WWW Virtual Library](https://vlib.org) | ~2.6 k |
+| Public APIs | [public-apis/public-apis](https://github.com/public-apis/public-apis) | ~2.2 k |
+| Dev Books | [EbookFoundation/free-programming-books](https://github.com/EbookFoundation/free-programming-books) | ~2.5 k |
+| Build Your Own X | [danistefanovic/build-your-own-x](https://github.com/danistefanovic/build-your-own-x) | ~0.4 k |
+| Privacy Tools | [pluja/awesome-privacy](https://github.com/pluja/awesome-privacy) | ~0.7 k |
+| Useful Sites | [sdmg15/Best-websites-a-programmer-should-visit](https://github.com/sdmg15/Best-websites-a-programmer-should-visit) | ~0.7 k |
 
 Tap a tab and that source's data loads underneath it — each tab fetches only its
 own files under `public/data/<source>/`, so the datasets can't mix.
