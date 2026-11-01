@@ -1,15 +1,14 @@
 {
  "source": "awesome",
  "title": "Awesome",
- "subtitle": "sindresorhus/awesome + every list tagged awesome on GitHub",
+ "subtitle": "sindresorhus/awesome + every list tagged awesome on GitHub — flat & tracked views",
  "homepage": "https://awesome.selfhosted.app",
- "license": "CC0 1.0 — source: github.com/sindresorhus/awesome · topic index via the GitHub API",
+ "license": "CC0 1.0 — source: github.com/sindresorhus/awesome · topic index via the GitHub API · topic index via the GitHub API",
  "fetched": "2026-10-24",
  "totals": {
-  "pages": 1,
-  "sections": 28,
-  "links": 1677,
-  "filtered_section_links": 0
+  "pages": 2,
+  "sections": 52,
+  "links": 2677
  },
  "pages": [
   {
@@ -45,6 +44,37 @@
     "Awesome / Testing",
     "Awesome / Miscellaneous",
     "Awesome / Related"
+   ]
+  },
+  {
+   "id": "tracked",
+   "title": "All Tracked List",
+   "links": 1000,
+   "sections": [
+    "All Tracked List / Platforms",
+    "All Tracked List / Programming Languages",
+    "All Tracked List / Front-End Development",
+    "All Tracked List / Back-End Development",
+    "All Tracked List / Computer Science",
+    "All Tracked List / Big Data",
+    "All Tracked List / Theory",
+    "All Tracked List / Books",
+    "All Tracked List / Editors",
+    "All Tracked List / Gaming",
+    "All Tracked List / Development Environment",
+    "All Tracked List / Entertainment",
+    "All Tracked List / Databases",
+    "All Tracked List / Media",
+    "All Tracked List / Learn",
+    "All Tracked List / Security",
+    "All Tracked List / Hardware",
+    "All Tracked List / Business",
+    "All Tracked List / Work",
+    "All Tracked List / Decentralized Systems",
+    "All Tracked List / Health and Social Science",
+    "All Tracked List / Testing",
+    "All Tracked List / Miscellaneous",
+    "All Tracked List / General & Misc"
    ]
   }
  ],
