@@ -18,6 +18,7 @@
 :root[data-src="buildyourownx"]{ --src-h: 42;  } /* rust      */
 :root[data-src="privacy"]      { --src-h: 312; } /* plum      */
 :root[data-src="usefulsites"]  { --src-h: 12;  } /* rose      */
+:root[data-src="contribute"]   { --src-h: 170; } /* mint — the human tab */
 /* ---- tokens: map room at night (default) ---- */
 :root {
   --bg: #121a1d;            /* deep blue-green ink */
