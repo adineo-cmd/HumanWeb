@@ -75,8 +75,8 @@ const LIST_SOURCES = ['fmhy', 'awesome', 'selfhosted', 'freefordev', 'vlib', 'ap
         </div>
       </div>
 
-      <details class="sec" open>
-        <summary>Citizen science<span class="cnt">6 platforms</span></summary>
+      <details class="sec">
+        <summary>Citizen science<span class="cnt">6 platforms</span><button class="up-btn" data-up aria-label="Back to top" title="Back to top"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button></summary>
         <ul class="links">
           <li><a href="https://www.zooniverse.org" target="_blank" rel="noopener">Zooniverse</a><span class="u">zooniverse.org</span><p>Classify galaxies, animals and handwritten archives — the biggest citizen-science platform on the web.</p></li>
           <li><a href="https://scistarter.org" target="_blank" rel="noopener">SciStarter</a><span class="u">scistarter.org</span><p>A directory of thousands of projects that need your observations, from backyards to telescopes.</p></li>
@@ -87,8 +87,8 @@ const LIST_SOURCES = ['fmhy', 'awesome', 'selfhosted', 'freefordev', 'vlib', 'ap
         </ul>
       </details>
 
-      <details class="sec" open>
-        <summary>Shared knowledge<span class="cnt">7 platforms</span></summary>
+      <details class="sec">
+        <summary>Shared knowledge<span class="cnt">7 platforms</span><button class="up-btn" data-up aria-label="Back to top" title="Back to top"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button></summary>
         <ul class="links">
           <li><a href="https://www.wikipedia.org" target="_blank" rel="noopener">Wikipedia</a><span class="u">wikipedia.org</span><p>Fix a typo or write a missing article on the encyclopedia anyone can edit.</p></li>
           <li><a href="https://commons.wikimedia.org" target="_blank" rel="noopener">Wikimedia Commons</a><span class="u">commons.wikimedia.org</span><p>Upload photographs and media the whole world can freely use.</p></li>
@@ -100,8 +100,8 @@ const LIST_SOURCES = ['fmhy', 'awesome', 'selfhosted', 'freefordev', 'vlib', 'ap
         </ul>
       </details>
 
-      <details class="sec" open>
-        <summary>Code the web<span class="cnt">4 platforms</span></summary>
+      <details class="sec">
+        <summary>Code the web<span class="cnt">4 platforms</span><button class="up-btn" data-up aria-label="Back to top" title="Back to top"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button></summary>
         <ul class="links">
           <li><a href="https://github.com/firstcontributions/first-contributions" target="_blank" rel="noopener">First Contributions</a><span class="u">github.com</span><p>A repo that walks you through your very first pull request, step by step.</p></li>
           <li><a href="https://goodfirstissue.dev" target="_blank" rel="noopener">Good First Issue</a><span class="u">goodfirstissue.dev</span><p>Find an open-source project that needs exactly the task you can do first.</p></li>
@@ -110,8 +110,8 @@ const LIST_SOURCES = ['fmhy', 'awesome', 'selfhosted', 'freefordev', 'vlib', 'ap
         </ul>
       </details>
 
-      <details class="sec" open>
-        <summary>Feed the lists behind the other tabs<span class="cnt">6 platforms</span></summary>
+      <details class="sec">
+        <summary>Feed the lists behind the other tabs<span class="cnt">6 platforms</span><button class="up-btn" data-up aria-label="Back to top" title="Back to top"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button></summary>
         <ul class="links">
           <li><a href="https://github.com/nbats/FMHYedit" target="_blank" rel="noopener">FMHY</a><span class="u">github.com</span><p>The FMHY tab here is a community wiki — send an edit to the biggest list of free media.</p></li>
           <li><a href="https://github.com/sindresorhus/awesome" target="_blank" rel="noopener">Awesome</a><span class="u">github.com</span><p>Improve or propose an awesome list — every list here started as someone's pull request.</p></li>
@@ -137,6 +137,14 @@ const LIST_SOURCES = ['fmhy', 'awesome', 'selfhosted', 'freefordev', 'vlib', 'ap
       n >= 1e6 ? (n / 1e6).toFixed(1).replace(/\.0$/, "") + "M"
       : n > 9999 ? Math.round(n / 1000) + "k"
       : String(n);
+    const toTop = () =>
+      window.scrollTo({ top: 0, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+    const UP_BTN = `<button class="up-btn" data-up aria-label="Back to top" title="Back to top"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>`;
+    const wireUpButtons = (el) =>
+      el.addEventListener("click", (e) => {
+        const b = e.target.closest("[data-up]");
+        if (b) { e.preventDefault(); toTop(); } // prevent the summary toggle too
+      });
 
     async function fetchAny(url) {
       const r = await fetch(url);
@@ -424,6 +432,7 @@ const LIST_SOURCES = ['fmhy', 'awesome', 'selfhosted', 'freefordev', 'vlib', 'ap
           `<b>${fmt(meta.totals.links)}</b> links · <b>${fmt(meta.totals.pages)}</b> pages` +
           (meta.homepage ? ` · <a href="${esc(meta.homepage)}" target="_blank" rel="noopener">homepage</a>` : "");
         renderPages(src);
+        wireUpButtons($('[data-role=content]', panel));
         $('[data-role=filter]', panel).addEventListener("input", (e) => {
           L[src].filter = e.target.value.trim(); L[src].shown = 60; renderLister(src);
         });
@@ -480,8 +489,8 @@ const LIST_SOURCES = ['fmhy', 'awesome', 'selfhosted', 'freefordev', 'vlib', 'ap
 
       const cap = st.shown;
       content.innerHTML = sections.slice(0, 60).map((s) => `
-        <details class="sec" open>
-          <summary>${esc(s.p)}<span class="cnt">${fmt(s.l.length)}</span></summary>
+        <details class="sec">
+          <summary>${esc(s.p)}<span class="cnt">${fmt(s.l.length)}</span>${UP_BTN}</summary>
           <ul class="links">${s.l.slice(0, cap).map(linkLi).join("")}</ul>
           ${s.l.length > cap ? `<p class="more-note">+ ${fmt(s.l.length - cap)} more…</p>` : ""}
         </details>`).join("") +
@@ -489,6 +498,8 @@ const LIST_SOURCES = ['fmhy', 'awesome', 'selfhosted', 'freefordev', 'vlib', 'ap
     }
 
     // ============================== boot =====================================
+    wireUpButtons(document.getElementById("panel-contribute"));
+
     const themeBtn = document.getElementById("theme-toggle");
     themeBtn?.addEventListener("click", () => {
       const next =
