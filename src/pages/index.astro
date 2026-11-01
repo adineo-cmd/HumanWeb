@@ -5,8 +5,26 @@ const LIST_SOURCES = ['fmhy', 'awesome', 'selfhosted', 'freefordev', 'vlib', 'ap
 ---
 <BaseLayout title="HumanWeb — the human-curated web">
   <header class="top">
-    <h1>Human<span>Web</span></h1>
-    <p class="tagline">The human-curated web — one tab per source, never mixed.</p>
+    <div class="mast-inner">
+      <div class="title-row">
+        <svg class="mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+          <circle cx="12" cy="12" r="9" />
+          <ellipse cx="12" cy="12" rx="4.2" ry="9" />
+          <path d="M3 12h18M4.6 7h14.8M4.6 17h14.8" />
+        </svg>
+        <h1>Human<span>Web</span></h1>
+        <button id="theme-toggle" class="theme-toggle" aria-label="Switch color theme">
+          <svg class="ico-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="4.4" />
+            <path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5 5l1.7 1.7M17.3 17.3 19 19M19 5l-1.7 1.7M6.7 17.3 5 19" />
+          </svg>
+          <svg class="ico-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M20.4 14.2A8.6 8.6 0 0 1 9.8 3.6a8.6 8.6 0 1 0 10.6 10.6Z" />
+          </svg>
+        </button>
+      </div>
+      <p class="tagline">The human-curated web — one tab per source, never mixed.</p>
+    </div>
   </header>
 
   <nav class="tabs" id="tabs" aria-label="Data sources"></nav>
@@ -59,18 +77,25 @@ const LIST_SOURCES = ['fmhy', 'awesome', 'selfhosted', 'freefordev', 'vlib', 'ap
     const esc = (s) => String(s ?? "").replace(/[&<>"']/g,
       (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
     const fmt = (n) => Number(n ?? 0).toLocaleString("en-US");
+    const fmtShort = (n) =>
+      n >= 1e6 ? (n / 1e6).toFixed(1).replace(/\.0$/, "") + "M"
+      : n > 9999 ? Math.round(n / 1000) + "k"
+      : String(n);
 
     async function fetchAny(url) {
       const r = await fetch(url);
       if (!r.ok) throw new Error(`${r.status} ${url}`);
-      if (url.endsWith(".gz")) {
+      const bytes = new Uint8Array(await r.arrayBuffer());
+      // Sniff the gzip magic — some servers deliver .gz with Content-Encoding
+      // already set (browser decodes it), others as raw application/gzip.
+      if (bytes[0] === 0x1f && bytes[1] === 0x8b) {
         if (!("DecompressionStream" in window)) {
           throw new Error("This browser lacks DecompressionStream — please update it.");
         }
         const ds = new DecompressionStream("gzip");
-        return new Response((await r.blob()).stream().pipeThrough(ds)).text();
+        return new Response(new Blob([bytes]).stream().pipeThrough(ds)).text();
       }
-      return r.text();
+      return new TextDecoder().decode(bytes);
     }
     const fetchJSON = async (url) => JSON.parse(await fetchAny(url));
 
@@ -95,7 +120,7 @@ const LIST_SOURCES = ['fmhy', 'awesome', 'selfhosted', 'freefordev', 'vlib', 'ap
     tabsEl.innerHTML = SOURCES.map((s) => `
       <button class="tab" data-src="${s.id}" title="${esc(s.subtitle)}">
         ${esc(s.title)}
-        ${s.links ? `<span class="n">${s.links > 9999 ? Math.round(s.links / 1000) + "k" : s.links}</span>` : ""}
+        ${s.links ? `<span class="n">${fmtShort(s.links)}</span>` : ""}
       </button>`).join("");
     tabsEl.addEventListener("click", (e) => {
       const b = e.target.closest(".tab");
@@ -103,7 +128,10 @@ const LIST_SOURCES = ['fmhy', 'awesome', 'selfhosted', 'freefordev', 'vlib', 'ap
     });
 
     function setActive(id) {
-      $$(".tab", tabsEl).forEach((t) => t.classList.toggle("active", t.dataset.src === id));
+      document.documentElement.dataset.src = id; // the whole page takes the drawer's ink
+      const active = $$(".tab", tabsEl).find((t) => t.dataset.src === id);
+      $$(".tab", tabsEl).forEach((t) => t.classList.toggle("active", t === active));
+      active?.scrollIntoView({ block: "nearest", inline: "nearest" }); // phone: the bar scrolls
       $$("main .panel").forEach((p) => (p.hidden = p.id !== `panel-${id}`));
     }
 
@@ -288,7 +316,7 @@ const LIST_SOURCES = ['fmhy', 'awesome', 'selfhosted', 'freefordev', 'vlib', 'ap
       const desc = node?.d;
       $("#curlie-links-h").hidden = !fOwn.length && !desc;
       $("#curlie-links").innerHTML =
-        (desc && !q ? `<li style="border-bottom:1px solid var(--border)"><p style="margin:0">${esc(desc)}</p></li>` : "") +
+        (desc && !q ? `<li class="desc-li"><p>${esc(desc)}</p></li>` : "") +
         fOwn.slice(0, C.shown).map(linkLi).join("");
       const moreBtn = $("#curlie-more");
       moreBtn.hidden = fOwn.length <= C.shown;
@@ -391,12 +419,20 @@ const LIST_SOURCES = ['fmhy', 'awesome', 'selfhosted', 'freefordev', 'vlib', 'ap
         <details class="sec" open>
           <summary>${esc(s.p)}<span class="cnt">${fmt(s.l.length)}</span></summary>
           <ul class="links">${s.l.slice(0, cap).map(linkLi).join("")}</ul>
-          ${s.l.length > cap ? `<p style="color:var(--muted);font-size:12px;padding:0 15px 10px">+ ${fmt(s.l.length - cap)} more…</p>` : ""}
+          ${s.l.length > cap ? `<p class="more-note">+ ${fmt(s.l.length - cap)} more…</p>` : ""}
         </details>`).join("") +
         (sections.length > 60 ? `<p class="status">+ ${fmt(sections.length - 60)} more sections — refine the search</p>` : "");
     }
 
     // ============================== boot =====================================
+    const themeBtn = document.getElementById("theme-toggle");
+    themeBtn?.addEventListener("click", () => {
+      const next =
+        document.documentElement.getAttribute("data-theme") === "light" ? "dark" : "light";
+      document.documentElement.setAttribute("data-theme", next);
+      localStorage.setItem("theme", next);
+    });
+
     route();
   </script>
 </BaseLayout>
