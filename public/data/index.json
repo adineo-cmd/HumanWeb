@@ -88,6 +88,21 @@
    "homepage": "https://github.com/sdmg15/Best-websites-a-programmer-should-visit",
    "links": 674,
    "note": ""
+  },
+  {
+   "id": "openwebsearch",
+   "title": "OpenWebSearch",
+   "links": 534,
+   "subtitle": "Europe's open web index — the project, its public remote index and the tooling around it",
+   "homepage": "https://openwebsearch.eu"
+  },
+  {
+   "id": "commoncrawl",
+   "title": "Common Crawl",
+   "links": 957,
+   "subtitle": "A live sample of the open Common Crawl — machine-extracted, not human-vetted",
+   "homepage": "https://commoncrawl.org",
+   "note": "sample of CC-MAIN-2026-43"
   }
  ]
 }

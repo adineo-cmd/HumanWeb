@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 
-const LIST_SOURCES = ['fmhy', 'awesome', 'selfhosted', 'freefordev', 'vlib', 'apis', 'devbooks', 'buildyourownx', 'privacy', 'usefulsites'];
+const LIST_SOURCES = ['fmhy', 'awesome', 'selfhosted', 'freefordev', 'vlib', 'apis', 'devbooks', 'buildyourownx', 'privacy', 'usefulsites', 'openwebsearch', 'commoncrawl'];
 ---
 <BaseLayout title="HumanWeb — the human-curated web">
   <header class="top">
@@ -38,15 +38,23 @@ const LIST_SOURCES = ['fmhy', 'awesome', 'selfhosted', 'freefordev', 'vlib', 'ap
         </div>
         <p class="stats" id="curlie-stats"></p>
       </div>
-      <nav class="crumbs" id="crumbs"></nav>
-      <input class="filter" id="curlie-filter" type="search"
-             placeholder="Filter inside this category (title, URL, description)…" />
-      <div class="status" id="curlie-status"></div>
-      <h3 class="section-h" id="curlie-cats-h" hidden>Categories</h3>
-      <div class="chips" id="curlie-cats"></div>
-      <h3 class="section-h" id="curlie-links-h" hidden>Websites</h3>
-      <ul class="links" id="curlie-links"></ul>
-      <button class="more" id="curlie-more" hidden>Show more</button>
+      <div class="curlie-wrap">
+        <aside class="curlie-treebox" aria-label="Directory tree">
+          <div class="tree-label">Branches</div>
+          <div id="curlie-tree"></div>
+        </aside>
+        <div class="curlie-main">
+          <nav class="crumbs" id="crumbs"></nav>
+          <input class="filter" id="curlie-filter" type="search"
+                 placeholder="Filter inside this category (title, URL, description)…" />
+          <div class="status" id="curlie-status"></div>
+          <h3 class="section-h" id="curlie-cats-h" hidden>Categories</h3>
+          <div class="chips" id="curlie-cats"></div>
+          <h3 class="section-h" id="curlie-links-h" hidden>Websites</h3>
+          <ul class="links" id="curlie-links"></ul>
+          <button class="more" id="curlie-more" hidden>Show more</button>
+        </div>
+      </div>
     </section>
 
     {LIST_SOURCES.map((src) => (
@@ -146,20 +154,29 @@ const LIST_SOURCES = ['fmhy', 'awesome', 'selfhosted', 'freefordev', 'vlib', 'ap
         if (b) { e.preventDefault(); toTop(); } // prevent the summary toggle too
       });
 
-    async function fetchAny(url) {
-      const r = await fetch(url);
-      if (!r.ok) throw new Error(`${r.status} ${url}`);
-      const bytes = new Uint8Array(await r.arrayBuffer());
-      // Sniff the gzip magic — some servers deliver .gz with Content-Encoding
-      // already set (browser decodes it), others as raw application/gzip.
-      if (bytes[0] === 0x1f && bytes[1] === 0x8b) {
-        if (!("DecompressionStream" in window)) {
-          throw new Error("This browser lacks DecompressionStream — please update it.");
+    async function fetchAny(url, tries = 3) {
+      let lastErr;
+      for (let attempt = 0; attempt < tries; attempt++) {
+        try {
+          const r = await fetch(url);
+          if (!r.ok) throw new Error(`${r.status} ${url}`);
+          const bytes = new Uint8Array(await r.arrayBuffer());
+          // Sniff the gzip magic — some servers deliver .gz with Content-Encoding
+          // already set (browser decodes it), others as raw application/gzip.
+          if (bytes[0] === 0x1f && bytes[1] === 0x8b) {
+            if (!("DecompressionStream" in window)) {
+              throw new Error("This browser lacks DecompressionStream — please update it.");
+            }
+            const ds = new DecompressionStream("gzip");
+            return await new Response(new Blob([bytes]).stream().pipeThrough(ds)).text();
+          }
+          return new TextDecoder().decode(bytes);
+        } catch (e) {
+          lastErr = e;
+          await new Promise((res) => setTimeout(res, 350 * (attempt + 1)));
         }
-        const ds = new DecompressionStream("gzip");
-        return new Response(new Blob([bytes]).stream().pipeThrough(ds)).text();
       }
-      return new TextDecoder().decode(bytes);
+      throw lastErr;
     }
     const fetchJSON = async (url) => JSON.parse(await fetchAny(url));
 
@@ -220,20 +237,46 @@ const LIST_SOURCES = ['fmhy', 'awesome', 'selfhosted', 'freefordev', 'vlib', 'ap
 
     function showErr(id, e) {
       const p = $(`#panel-${id} [data-role=status]`) || $(`#curlie-status`);
-      if (p) { p.textContent = "⚠ " + (e.message || e); p.classList.add("err"); }
+      if (p) {
+        p.classList.add("err");
+        p.textContent = `⚠ Could not load this source (${e.message || e}). `;
+        const b = document.createElement("button");
+        b.className = "retry";
+        b.textContent = "Retry";
+        b.onclick = () => { p.textContent = ""; p.classList.remove("err"); route(); };
+        p.appendChild(b);
+      }
       console.error(e);
     }
 
     // ============================== curlie browser ===========================
+    const LETTER_CAT = /^[a-z]$/i; // Curlie's empty A–Z placeholder categories
     const C = {
       ready: false, meta: null, tree: [], nodes: new Map(), refs: new Map(),
       files: new Map(), path: "", filter: "", shown: 100,
+      expanded: new Set(), // tree branches the visitor opened by hand
     };
+
+    function flashPanel(sel) {
+      const panel = $(sel);
+      if (!panel) return;
+      const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+      window.scrollTo({
+        top: Math.max(0, panel.getBoundingClientRect().top + window.scrollY - 12),
+        behavior: reduced ? "auto" : "smooth",
+      });
+      panel.classList.remove("flash");
+      void panel.offsetWidth;
+      panel.classList.add("flash");
+    }
 
     async function initCurlie() {
       if (C.ready) return;
-      C.meta = await fetchJSON("data/curlie/meta.json");
-      C.tree = await fetchJSON("data/curlie/tree.json.gz");
+      // meta and tree are independent — fetch them together
+      [C.meta, C.tree] = await Promise.all([
+        fetchJSON("data/curlie/meta.json"),
+        fetchJSON("data/curlie/tree.json.gz"),
+      ]);
       const indexNode = (nd, base) => {
         const seg = nd.t.replace(/ /g, "_");
         const p = base ? `${base}/${seg}` : seg;
@@ -297,7 +340,7 @@ const LIST_SOURCES = ['fmhy', 'awesome', 'selfhosted', 'freefordev', 'vlib', 'ap
       </li>`;
     }
 
-    async function showCurlie(P) {
+    async function showCurlie(P, opts = {}) {
       const status = $("#curlie-status");
       status.classList.remove("err");
       try {
@@ -346,7 +389,10 @@ const LIST_SOURCES = ['fmhy', 'awesome', 'selfhosted', 'freefordev', 'vlib', 'ap
             .sort((a, b) => b.links - a.links);
         }
 
+        subcats = subcats.filter((s) => !LETTER_CAT.test(s.title));
         renderCurlie(P, subcats, own);
+        renderTree(P);
+        if (opts.scroll !== false) flashPanel("#panel-curlie");
       } catch (e) { showErr("curlie", e); }
     }
 
@@ -364,6 +410,36 @@ const LIST_SOURCES = ['fmhy', 'awesome', 'selfhosted', 'freefordev', 'vlib', 'ap
       el.onclick = (e) => {
         const a = e.target.closest("[data-go]");
         if (a) location.hash = `curlie/${a.dataset.go}`.replace(/\/$/, "");
+      };
+    }
+
+    // Branch sidebar, curlie.org style: the whole path stays visible and
+    // expandable, the branch you are in is opened down to where you are.
+    function renderTree(P) {
+      const el = $("#curlie-tree");
+      if (!el) return;
+      const segs = P ? P.split("/") : [];
+      const node = (nd, depth) => {
+        const kids = (nd.c ?? []).filter((k) => !LETTER_CAT.test(k.t));
+        const onPath = nd._p === segs.slice(0, depth + 1).join("/");
+        const isOpen = onPath || C.expanded.has(nd._p);
+        const caret = kids.length
+          ? `<button class="tcar" data-p="${esc(nd._p)}" aria-expanded="${isOpen}" aria-label="${isOpen ? "Collapse" : "Expand"} ${esc(nd.t)}"></button>`
+          : `<span class="tcar nix"></span>`;
+        const kidsHtml = isOpen && kids.length
+          ? `<ul class="tkids">${kids.map((k) => node(k, depth + 1)).join("")}</ul>`
+          : "";
+        return `<li class="tnode${isOpen ? " open" : ""}${kids.length ? "" : " kids-none"}">
+          <div class="trow">${caret}<a class="tl${nd._p === P ? " here" : ""}" href="#curlie/${esc(nd._p)}">${esc(nd.t)}</a>${nd.tot ? `<span class="tn">${fmt(nd.tot)}</span>` : ""}</div>
+          ${kidsHtml}</li>`;
+      };
+      el.innerHTML = `<ul class="tree">${C.tree.map((r) => node(r, 0)).join("")}</ul>`;
+      el.onclick = (e) => {
+        const car = e.target.closest(".tcar[data-p]");
+        if (!car) return;
+        const p = car.dataset.p;
+        if (C.expanded.has(p)) C.expanded.delete(p); else C.expanded.add(p);
+        renderTree(C.path);
       };
     }
 
@@ -408,7 +484,7 @@ const LIST_SOURCES = ['fmhy', 'awesome', 'selfhosted', 'freefordev', 'vlib', 'ap
     $("#curlie-filter").addEventListener("input", (e) => {
       C.filter = e.target.value.trim();
       C.shown = 100;
-      showCurlie(C.path);
+      showCurlie(C.path, { scroll: false });
     });
 
     // ============================== list sources =============================
@@ -499,6 +575,17 @@ const LIST_SOURCES = ['fmhy', 'awesome', 'selfhosted', 'freefordev', 'vlib', 'ap
 
     // ============================== boot =====================================
     wireUpButtons(document.getElementById("panel-contribute"));
+
+    // warm the small metadata files so switching sources feels instant
+    const warm = () => {
+      for (const s of SOURCES) {
+        if (s.id !== "curlie" && s.id !== "contribute") {
+          fetch(`data/${s.id}/meta.json`).catch(() => {});
+        }
+      }
+    };
+    if ("requestIdleCallback" in window) requestIdleCallback(warm, { timeout: 5000 });
+    else setTimeout(warm, 2500);
 
     const themeBtn = document.getElementById("theme-toggle");
     themeBtn?.addEventListener("click", () => {

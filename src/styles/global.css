@@ -19,6 +19,8 @@
 :root[data-src="privacy"]      { --src-h: 312; } /* plum      */
 :root[data-src="usefulsites"]  { --src-h: 12;  } /* rose      */
 :root[data-src="contribute"]   { --src-h: 170; } /* mint — the human tab */
+:root[data-src="openwebsearch"]{ --src-h: 205; } /* steel blue — EU index */
+:root[data-src="commoncrawl"]  { --src-h: 355; } /* crimson — the raw crawl */
 /* ---- tokens: map room at night (default) ---- */
 :root {
   --bg: #121a1d;            /* deep blue-green ink */
@@ -258,6 +260,94 @@ main {
 .status { color: var(--muted); font-size: 13px; min-height: 18px; margin: 8px 0; }
 .status.err { color: #e0655e; }
 [data-theme="light"] .status.err { color: #b3352e; }
+.status .retry {
+  margin-left: 8px;
+  padding: 3px 12px;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  background: transparent;
+  color: inherit;
+  font: 600 12px/1.4 var(--body);
+  cursor: pointer;
+}
+.status .retry:hover { background: color-mix(in oklab, currentColor 12%, transparent); }
+
+/* a sign that new content arrived where you are */
+.panel.flash { animation: panel-flash 1.1s ease; }
+@keyframes panel-flash {
+  0%, 35% { box-shadow: 0 0 0 3px var(--src), var(--shadow); }
+  100% { box-shadow: var(--shadow); }
+}
+
+/* ---- curlie two-pane: branch tree + content (curlie.org style) ---- */
+.curlie-wrap {
+  display: grid;
+  grid-template-columns: 262px minmax(0, 1fr);
+  gap: 22px;
+  align-items: start;
+  margin-top: 10px;
+}
+.curlie-treebox {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--bg2);
+  padding: 10px 10px 12px;
+  max-height: calc(100vh - 140px);
+  overflow: auto;
+}
+.tree-label {
+  font: 600 12px/1 var(--body);
+  color: var(--muted);
+  padding: 2px 6px 8px;
+}
+.tree, .tree .tkids { list-style: none; margin: 0; padding: 0; }
+.tree .tkids { margin-left: 9px; padding-left: 8px; border-left: 1px solid var(--line-soft); }
+.tnode.kids-none .tcar { visibility: hidden; }
+.trow { display: flex; align-items: center; gap: 2px; padding: 1px 2px; }
+.tcar {
+  appearance: none;
+  flex: none;
+  width: 18px;
+  height: 18px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1;
+  cursor: pointer;
+}
+.tcar::before { content: "▸"; }
+.tnode.open > .trow .tcar::before { content: "▾"; }
+.tcar:hover { color: var(--src); background: var(--src-tint); }
+.tl {
+  color: var(--text);
+  font-weight: 600;
+  font-size: 13px;
+  line-height: 1.35;
+  padding: 2px 5px;
+  border-radius: 5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.tl:hover { color: var(--src); background: var(--src-tint); text-decoration: none; }
+.tl.here { color: var(--src); }
+.tn {
+  margin-left: auto;
+  flex: none;
+  color: var(--muted);
+  font-size: 10.5px;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 860px) {
+  .curlie-wrap { grid-template-columns: 1fr; gap: 14px; }
+  .curlie-treebox { max-height: 300px; }
+}
 
 /* ---- filter ---- */
 .filter {

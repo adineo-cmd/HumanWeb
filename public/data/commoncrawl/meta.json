@@ -1,0 +1,28 @@
+{
+ "source": "commoncrawl",
+ "title": "Common Crawl",
+ "subtitle": "A live sample of the open Common Crawl — machine-extracted, not human-vetted",
+ "homepage": "https://commoncrawl.org",
+ "license": "CC0 1.0 — source: Common Crawl petabyte web crawl",
+ "crawl": "CC-MAIN-2026-43",
+ "fetched": "2026-11-07",
+ "totals": {
+  "pages": 1,
+  "sections": 5,
+  "links": 957
+ },
+ "pages": [
+  {
+   "id": "commoncrawl",
+   "title": "Common Crawl",
+   "links": 957,
+   "sections": [
+    "Common Crawl / Segment 00000",
+    "Common Crawl / Segment 00666",
+    "Common Crawl / Segment 00332",
+    "Common Crawl / Segment 00998",
+    "Common Crawl / Segment 00664"
+   ]
+  }
+ ]
+}

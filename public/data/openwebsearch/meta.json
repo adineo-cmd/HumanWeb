@@ -1,0 +1,27 @@
+{
+ "source": "openwebsearch",
+ "title": "OpenWebSearch",
+ "subtitle": "Europe's open web index — the project, its public remote index and the tooling around it",
+ "homepage": "https://openwebsearch.eu",
+ "license": "Links only — OWI data is available under its own licence via the LEXIS portal",
+ "fetched": "2026-11-07",
+ "totals": {
+  "pages": 1,
+  "sections": 5,
+  "links": 534
+ },
+ "pages": [
+  {
+   "id": "openwebsearch",
+   "title": "OpenWebSearch",
+   "links": 534,
+   "sections": [
+    "OpenWebSearch / Start here",
+    "OpenWebSearch / Query it today (no account)",
+    "OpenWebSearch / How it is built",
+    "OpenWebSearch / Sibling open data",
+    "OpenWebSearch / Live sample — pages in the index"
+   ]
+  }
+ ]
+}
