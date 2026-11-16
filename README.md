@@ -5,7 +5,7 @@
 **A human-curated map of the web — thirteen directories, one tab each.**
 
 [![Live site](https://img.shields.io/badge/live-site-2ea44f?logo=githubpages&logoColor=white)](https://adineo-cmd.github.io/HumanWeb/)
-![Astro](https://img.shields.io/badge/Astro-BC52EE?logo=astro&logoColor=white) ![Node.js](https://img.shields.io/badge/Node.js-5FA04E?logo=nodedotjs&logoColor=white) ![Static](https://img.shields.io/badge/static-no%20build-2ea44f) ![GitHub Actions](https://img.shields.io/badge/Actions-2088FF?logo=githubactions&logoColor=white)
+![Astro](https://img.shields.io/badge/Astro-BC52EE?logo=astro&logoColor=white) ![Node.js](https://img.shields.io/badge/Node.js-5FA04E?logo=nodedotjs&logoColor=white) ![Static site](https://img.shields.io/badge/static-site-2ea44f) ![GitHub Actions](https://img.shields.io/badge/Actions-2088FF?logo=githubactions&logoColor=white)
 
 [![Stars](https://img.shields.io/github/stars/adineo-cmd/HumanWeb?style=flat&logo=github&label=stars)](https://github.com/adineo-cmd/HumanWeb/stargazers) [![Last commit](https://img.shields.io/github/last-commit/adineo-cmd/HumanWeb?style=flat)](https://github.com/adineo-cmd/HumanWeb/commits)
 
