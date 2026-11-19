@@ -7,7 +7,7 @@ BASE = Path(__file__).resolve().parent.parent
 OUT = BASE / "public" / "data"
 
 ORDER = ["curlie", "fmhy", "awesome", "selfhosted", "freefordev", "vlib",
-         "apis", "devbooks", "buildyourownx", "privacy", "usefulsites"]
+         "apis", "devbooks", "buildyourownx", "privacy", "usefulsites", "listofweb", "awesometools"]
 GENERIC = {
     "fmhy": ("FMHY", "r/FREEMEDIAHECKYEAH — the big list of free media & tools", "https://fmhy.net"),
     "awesome": ("Awesome", "sindresorhus/awesome — curated lists about everything", "https://github.com/sindresorhus/awesome"),
@@ -19,6 +19,8 @@ GENERIC = {
     "buildyourownx": ("Build Your Own X", "step-by-step guides: build your own database, bot, compiler, OS…", "https://github.com/danistefanovic/build-your-own-x"),
     "privacy": ("Privacy Tools", "services & alternatives that respect your privacy", "https://github.com/pluja/awesome-privacy"),
     "usefulsites": ("Useful Sites", "the best websites a programmer should visit", "https://github.com/sdmg15/Best-websites-a-programmer-should-visit"),
+    "listofweb": ("List of Web", "6,000+ websites across every domain — the long directory, kept intact", "https://github.com/adineo-cmd/list-of-web"),
+    "awesometools": ("Awesome Website Tools", "a curated collection of interesting websites and tools", "https://github.com/adineo-cmd/awesome-website-tools"),
 }
 
 out = {"generated": "2026-10-24", "sources": []}

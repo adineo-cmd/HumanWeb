@@ -114,6 +114,20 @@ SOURCES = {
         "resolve_base": "https://github.com/pluja/awesome-privacy/blob/main/",
         "titles": {"awesome-privacy": "Privacy Tools"},
     },
+    "listofweb": {
+        "title": "List of Web",
+        "subtitle": "6,000+ websites across every domain — the long directory, kept intact",
+        "homepage": "https://github.com/adineo-cmd/list-of-web",
+        "license": "© contributors — source: github.com/adineo-cmd/list-of-web",
+        "resolve_base": "https://github.com/adineo-cmd/list-of-web/blob/main/",
+    },
+    "awesometools": {
+        "title": "Awesome Website Tools",
+        "subtitle": "a curated collection of interesting websites and tools",
+        "homepage": "https://github.com/adineo-cmd/awesome-website-tools",
+        "license": "© contributors — source: github.com/adineo-cmd/awesome-website-tools",
+        "resolve_base": "https://github.com/adineo-cmd/awesome-website-tools/blob/main/",
+    },
     "usefulsites": {
         "title": "Useful Sites",
         "subtitle": "the best websites a programmer should visit — study, tools, news",

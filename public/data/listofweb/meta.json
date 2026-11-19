@@ -1,0 +1,32 @@
+{
+ "source": "listofweb",
+ "title": "List of Web",
+ "subtitle": "6,000+ websites across every domain — the long directory, kept intact",
+ "homepage": "https://github.com/adineo-cmd/list-of-web",
+ "license": "© contributors — source: github.com/adineo-cmd/list-of-web",
+ "fetched": "2026-11-20",
+ "totals": {
+  "pages": 1,
+  "sections": 10,
+  "links": 100
+ },
+ "pages": [
+  {
+   "id": "listofweb",
+   "title": "List of Web",
+   "links": 100,
+   "sections": [
+    "listofweb / Machine Learning and Data Science",
+    "listofweb / Web Development",
+    "listofweb / DevOps and Infrastructure",
+    "listofweb / Mobile Development",
+    "listofweb / Libraries and Frameworks",
+    "listofweb / Tools and Utilities",
+    "listofweb / Security",
+    "listofweb / Programming Languages",
+    "listofweb / Data Visualization",
+    "listofweb / Miscellaneous"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,62 @@
+{
+ "source": "awesometools",
+ "title": "Awesome Website Tools",
+ "subtitle": "a curated collection of interesting websites and tools — dev, design, learning, productivity",
+ "homepage": "https://github.com/adineo-cmd/awesome-website-tools",
+ "license": "© contributors — source: github.com/adineo-cmd/awesome-website-tools",
+ "fetched": "2026-11-20",
+ "totals": {
+  "pages": 1,
+  "sections": 12,
+  "links": 155
+ },
+ "pages": [
+  {
+   "id": "awesometools",
+   "title": "Awesome Website Tools",
+   "links": 155,
+   "sections": [
+    "awesometools / Development Tools",
+    "awesometools / Internet Database",
+    "awesometools / General-Purpose Data Repositories",
+    "awesometools / Finance and Economics",
+    "awesometools / Healthcare and Biology",
+    "awesometools / Social Science",
+    "awesometools / Environmental and Geospatial",
+    "awesometools / Images and Computer Vision",
+    "awesometools / Natural Language Processing",
+    "awesometools / Miscellaneous:",
+    "awesometools / Domain-Specific Data Repositories",
+    "awesometools / Specialized Datasets",
+    "awesometools / Miscellaneous",
+    "awesometools / Design Resources",
+    "awesometools / Learning Platforms",
+    "awesometools / Professional Software",
+    "awesometools / Healthcare",
+    "awesometools / Finance",
+    "awesometools / Manufacturing",
+    "awesometools / Retail",
+    "awesometools / Construction",
+    "awesometools / Education",
+    "awesometools / Information Technology",
+    "awesometools / Hospitality",
+    "awesometools / Real Estate",
+    "awesometools / Energy",
+    "awesometools / General Business Management",
+    "awesometools / Automotive",
+    "awesometools / Telecommunications",
+    "awesometools / Aerospace and Defense",
+    "awesometools / Agriculture",
+    "awesometools / Food and Beverage",
+    "awesometools / Pharmaceuticals",
+    "awesometools / Media and Entertainment",
+    "awesometools / Logistics and Transportation",
+    "awesometools / Mining",
+    "awesometools / Chemicals",
+    "awesometools / Productivity Tools",
+    "awesometools / Contributing",
+    "awesometools / License"
+   ]
+  }
+ ]
+}

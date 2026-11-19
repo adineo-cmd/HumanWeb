@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-24",
+ "generated": "2026-11-20",
  "sources": [
   {
    "id": "curlie",
@@ -103,6 +103,22 @@
    "subtitle": "A live sample of the open Common Crawl — machine-extracted, not human-vetted",
    "homepage": "https://commoncrawl.org",
    "note": "sample of CC-MAIN-2026-43"
+  },
+  {
+   "id": "listofweb",
+   "title": "List of Web",
+   "subtitle": "6,000+ websites across every domain — the long directory, kept intact",
+   "homepage": "https://github.com/adineo-cmd/list-of-web",
+   "links": 100,
+   "note": ""
+  },
+  {
+   "id": "awesometools",
+   "title": "Awesome Website Tools",
+   "subtitle": "a curated collection of interesting websites and tools — dev, design, learning, productivity",
+   "homepage": "https://github.com/adineo-cmd/awesome-website-tools",
+   "links": 155,
+   "note": ""
   }
  ]
 }

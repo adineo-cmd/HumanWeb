@@ -2,7 +2,7 @@
 
 # HumanWeb
 
-**A human-curated map of the web — thirteen directories, one tab each.**
+**A human-curated map of the web — fifteen directories, one tab each.**
 
 [![Live site](https://img.shields.io/badge/live-site-2ea44f?logo=githubpages&logoColor=white)](https://adineo-cmd.github.io/HumanWeb/)
 ![Astro](https://img.shields.io/badge/Astro-BC52EE?logo=astro&logoColor=white) ![Node.js](https://img.shields.io/badge/Node.js-5FA04E?logo=nodedotjs&logoColor=white) ![Static site](https://img.shields.io/badge/static-site-2ea44f) ![GitHub Actions](https://img.shields.io/badge/Actions-2088FF?logo=githubactions&logoColor=white)
@@ -15,7 +15,7 @@
 
 ---
 
-Thirteen hand-curated web directories, kept **separate on purpose**. Every tab
+Fifteen hand-curated web directories, kept **separate on purpose**. Every tab
 loads only its own files from `public/data/<source>/`, so a machine-extracted
 sample can never be mistaken for a human-vetted list.
 
@@ -27,7 +27,7 @@ into 767 lazy-loaded chunk files. Across all thirteen sources the app indexes
 
 | | Feature | What it does |
 | --- | --- | --- |
-| 🗂️ | **Thirteen sources** | Curlie, FMHY, Awesome, Self-Hosted, Free for Dev, VLib, Public APIs, Dev Books, Build Your Own X, Privacy Tools, Useful Sites, OpenWebSearch and Common Crawl. |
+| 🗂️ | **Fifteen sources** | Curlie, FMHY, Awesome, Self-Hosted, Free for Dev, VLib, Public APIs, Dev Books, Build Your Own X, Privacy Tools, Useful Sites, OpenWebSearch, Common Crawl, List of Web and Awesome Website Tools. |
 | 🌳 | **Curlie tree** | A 0.1 MB tree index loads instantly; clicking a category lazy-loads one chunk file. |
 | 🔗 | **Deep links** | Every Curlie category is addressable, e.g. `#curlie/Arts/Animation/Anime`. |
 | 📴 | **No server** | Data is fetched and gunzipped in the browser with `DecompressionStream`, so any static host works. |
